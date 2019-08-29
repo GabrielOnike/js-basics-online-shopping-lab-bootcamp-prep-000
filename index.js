@@ -9,84 +9,92 @@ function setCart(c) {
   return cart;
 }
 
-function addToCart(item) {
-  var item = generateCartItem(item)
-  getCart().push(item)
-  return `${item.itemName} has been added to your cart.`
+function addToCart(itemName) {
+ // write your code here
+ 
+ var itemPrice = Math.floor((Math.random() * 100) + 1);
+ var x = {[itemName]: itemPrice};
+ console.log(`${itemName} has been added to your cart.`);
+ cart.push(x);
+ return cart;
 }
+
+
 
 function viewCart() {
-  return getCart().length === 0 ? "Your shopping cart is empty." : generateCartDescription()
+  
+  if(cart.length === 0){
+     console.log("Your shopping cart is empty.");
+  }
+  
+  if(cart.length === 1){
+    console.log("In your cart, you have"+" "+ Object.keys(cart[0])+ " "+"at"+" "+"$"+ cart[0][Object.keys(cart[0])]+".");
+    
+  }else if(cart.length ===2) {
+  console.log("In your cart, you have " + Object.keys(cart[0])+ " at $"+ cart[0][Object.keys(cart[0])]+" and " + Object.keys(cart[1])+ " at $"+ cart[1][Object.keys(cart[1])]+".");
+  }else{
+        let strings = [];
+        for(let i = 0; i < cart.length; i++) {
+        let item = Object.keys(cart[i])
+        let price = cart[i][item]
+    
+        strings.push(item+" "+"at"+" " + "$"+price);
+  }
+  
+        let last = strings[strings.length - 1];
+        strings.pop();
+        strings.push("and "+last);
+  
+        console.log("In your cart, you have" + " " + strings.join(", ")+".");
+  }
 }
+
 
 function total() {
-  var sum = sumUpPrices()
-  return sum
+  
+  let value = [];
+  for(let i=0; i < cart.length; i++){
+      let items = Object.keys(cart[i])
+      let prices = cart[i][items]
+      value.push(prices);
+  }
+     
+     let sum = 0;
+     for(var x in value){
+       sum += value[x];
+     }
+     
+     return parseInt(`${sum}`)
 }
 
-function removeFromCart(itemName) {
-  var itemToRemove = searchCartForItemToRemove(itemName)
-  return itemToRemove ? removeItemFromCart(itemToRemove) : notifyUserThereIsNoItemToRemove()
+
+function removeFromCart(remove){
+     for(var i = 0; i < cart.length; i++){
+      
+       if(cart[i].hasOwnProperty(remove)){
+         cart.splice(i, 1);
+       }
+       
+     }
+     
+    console.log("That item is not in your cart.")
+    return cart
 }
+
+
 
 function placeOrder(cardNumber) {
-  if (arguments[0] == undefined) {
-    return "Sorry, we don't have a credit card on file for you."
-  } else {
-    var sumToCharge = total()
-    setCart([])
-    return `Your total cost is $${sumToCharge}, which will be charged to the card ${cardNumber}.`
+  
+  if(!cardNumber){
+  console.log("Sorry, we don't have a credit card on file for you.");
+  }else{
+  console.log(`Your total cost is $${total()}, which will be charged to the card ${cardNumber}.`);
   }
-}
-
-// helper functions
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function generateCartItem(itemName) {
-  return {
-    itemName:itemName,
-    itemPrice:getRandomInt(1, 100)
+  
+  for(var i in cart){
+    cart.splice(i, 1);
+    
   }
+  
+  
 }
-
-function generateCartDescription() {
-  var cartDescription = 'In your cart, you have '
-  if ( getCart().length >= 1 ) {
-    cartDescription += `${getCart()[0].itemName} at $${getCart()[0].itemPrice}`
-  }
-  if ( getCart().length >= 2 ) {
-    var middleCartItemsDescription = ''
-    for (var i=1; i<getCart().length -1; i++) {
-      middleCartItemsDescription += `, ${getCart()[i].itemName} at $${getCart()[i].itemPrice}`
-    }
-    cartDescription += `${middleCartItemsDescription}, and ${getCart()[getCart().length-1].itemName} at $${getCart()[getCart().length-1].itemPrice}`
-  }
-
-  return `${cartDescription}.`
-}
-
-function searchCartForItemToRemove(itemName) {
-  var searchResult
-  for (var i=0; i<getCart().length; i++) {
-    if (getCart()[i].itemName === itemName) {searchResult = getCart()[i]}
-  }
-  return searchResult
-}
-
-function sumUpPrices() {
-  var sum = 0
-  for (var i=0; i<getCart().length; i++) {
-    sum = sum + getCart()[i].itemPrice
-  }
-  return sum
-}
-
-function notifyUserThereIsNoItemToRemove() {
-  return 'That item is not in your cart.'
-}
-
-function removeItemFromCart(itemToRemove) {
-  var indexOfItemToRemove = cart.indexOf(itemToRemove)
-  getCart().splice(indexOfItemToRemove,1) }
